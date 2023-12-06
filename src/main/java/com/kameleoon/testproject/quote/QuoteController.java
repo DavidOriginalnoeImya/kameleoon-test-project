@@ -44,6 +44,28 @@ public class QuoteController {
                 .body(quoteDTO);
     }
 
+    @PostMapping("/{id}/upvote")
+    public ResponseEntity<?> upvoteQuote(
+            @PathVariable Long id,
+            @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
+    ) {
+        quoteService.upvoteQuote(id, userEmail);
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    @PostMapping("/{id}/downvote")
+    public ResponseEntity<?> downvoteQuote(
+            @PathVariable Long id,
+            @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
+    ) {
+        quoteService.downvoteQuote(id, userEmail);
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
     @PutMapping
     public ResponseEntity<QuoteDTO> updateQuote(@RequestBody UpdateQuoteDTO updateQuoteDTO) {
         return ResponseEntity

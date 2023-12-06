@@ -5,6 +5,7 @@ import com.kameleoon.testproject.quote.dto.QuoteDTO;
 import com.kameleoon.testproject.quote.dto.UpdateQuoteDTO;
 import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.user.UserRepository;
+import com.kameleoon.testproject.vote.VoteService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,16 @@ public class QuoteService {
 
     private final UserRepository userRepository;
 
-    public QuoteService(QuoteRepository quoteRepository, UserRepository userRepository) {
+    private final VoteService voteService;
+
+    public QuoteService(
+            QuoteRepository quoteRepository,
+            UserRepository userRepository,
+            VoteService voteService
+    ) {
         this.quoteRepository = quoteRepository;
         this.userRepository = userRepository;
+        this.voteService = voteService;
     }
 
     public List<QuoteDTO> getQuotes() {
@@ -61,6 +69,18 @@ public class QuoteService {
 
         quote.update(updateQuoteDTO);
         return quoteRepository.save(quote).toDTO();
+    }
+
+    public void upvoteQuote(Long id, String userEmail) {
+        Quote quote = quoteRepository.findById(id).orElseThrow();
+        User user = userRepository.getByEmail(userEmail).orElseThrow();
+        voteService.addUpvote(quote, user);
+    }
+
+    public void downvoteQuote(Long id, String userEmail) {
+        Quote quote = quoteRepository.findById(id).orElseThrow();
+        User user = userRepository.getByEmail(userEmail).orElseThrow();
+        voteService.addDownvote(quote, user);
     }
 
     public void deleteQuote(Long id) {

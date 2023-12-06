@@ -2,10 +2,7 @@ package com.kameleoon.testproject.vote;
 
 import com.kameleoon.testproject.quote.Quote;
 import com.kameleoon.testproject.user.User;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -31,16 +28,15 @@ public class Vote {
     )
     private User user;
 
-    private boolean upvote;
-
-    private LocalDate voteDate = LocalDate.now();
+    @Enumerated(EnumType.STRING)
+    private VoteType voteType;
 
     protected Vote() {}
 
-    public Vote(Quote quote, User user, boolean upvote) {
+    public Vote(Quote quote, User user, VoteType voteType) {
         this.id = new Id(quote.getId(), user.getId());
         this.quote = quote;
         this.user = user;
-        this.upvote = upvote;
+        this.voteType = voteType;
     }
 }
