@@ -2,6 +2,7 @@ package com.kameleoon.testproject.user;
 
 import com.kameleoon.testproject.user.dto.AddUserDTO;
 import com.kameleoon.testproject.user.dto.UserDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDTO> addUser(@RequestBody AddUserDTO addUserDTO) {
         return ResponseEntity
-                .status(201)
+                .status(HttpStatus.CREATED)
                 .body(userService.addUser(addUserDTO));
     }
 }
