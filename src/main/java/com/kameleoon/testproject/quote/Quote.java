@@ -6,7 +6,7 @@ import com.kameleoon.testproject.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +25,7 @@ public class Quote {
 
     private LocalDate updateDate = LocalDate.now();
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
     public Quote() {}
