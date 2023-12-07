@@ -29,7 +29,7 @@ public class Quote {
     @ManyToOne(optional = false)
     private User publisher;
 
-    @OneToMany(mappedBy = "quote")
+    @OneToMany(mappedBy = "quote", cascade = CascadeType.REMOVE)
     private Set<Vote> votes = new HashSet<>();
 
     public Quote() {}
