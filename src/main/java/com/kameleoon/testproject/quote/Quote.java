@@ -4,6 +4,7 @@ import com.kameleoon.testproject.quote.dto.QuoteDTO;
 import com.kameleoon.testproject.quote.dto.UpdateQuoteDTO;
 import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.vote.Vote;
+import com.kameleoon.testproject.vote.VoteType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,11 +45,27 @@ public class Quote {
     }
 
     public QuoteDTO toDTO() {
+        long upvotes = getUpvotes(), downvotes = getDownvotes();
+
         return QuoteDTO.builder()
-                .id(id)
-                .text(text)
+                .id(id).text(text)
                 .publisher(user.getEmail())
                 .lastUpdate(updateDate)
+                .upvotes(upvotes)
+                .downvotes(downvotes)
+                .score(upvotes - downvotes)
                 .build();
+    }
+
+    public long getUpvotes() {
+        return votes.stream()
+                .filter(v -> VoteType.UPVOTE.equals(v.getVoteType()))
+                .count();
+    }
+
+    public long getDownvotes() {
+        return votes.stream()
+                .filter(v -> VoteType.DOWNVOTE.equals(v.getVoteType()))
+                .count();
     }
 }

@@ -17,4 +17,10 @@ public class QuoteDTO {
     private LocalDate lastUpdate;
 
     private String publisher;
+
+    private long upvotes;
+
+    private long downvotes;
+
+    private long score;
 }
