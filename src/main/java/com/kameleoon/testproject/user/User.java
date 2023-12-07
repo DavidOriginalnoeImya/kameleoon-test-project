@@ -2,15 +2,14 @@ package com.kameleoon.testproject.user;
 
 import com.kameleoon.testproject.user.dto.AddUserDTO;
 import com.kameleoon.testproject.user.dto.UserDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Base64;
 
 @Entity
 @Table(name = "users")
@@ -24,6 +23,8 @@ public class User {
 
     private String name;
 
+    @Email
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -35,7 +36,7 @@ public class User {
         User user = new User();
         user.setName(addUserDTO.getName());
         user.setEmail(addUserDTO.getEmail());
-        user.setPassword(addUserDTO.getPassword());
+        user.setPassword(encryptPassword(addUserDTO.getPassword()));
         return user;
     }
 
@@ -46,5 +47,9 @@ public class User {
                 .email(getEmail())
                 .creationDate(getCreationDate())
                 .build();
+    }
+
+    private static String encryptPassword(String password) {
+        return Base64.getEncoder().encodeToString(password.getBytes());
     }
 }
