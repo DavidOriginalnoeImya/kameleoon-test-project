@@ -8,6 +8,8 @@ import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
 import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
 import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.user.UserRepository;
+import com.kameleoon.testproject.user.dto.UserDTO;
+import com.kameleoon.testproject.user.exceptions.UserNotFoundException;
 import com.kameleoon.testproject.vote.VoteService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +57,7 @@ public class QuoteService {
     }
 
     public QuoteDTO getQuote(Long id) {
-        return findById(id).toDTO();
+        return findQuoteById(id).toDTO();
     }
 
     public QuoteDTO getRandomQuote() {
@@ -71,16 +73,13 @@ public class QuoteService {
     }
 
     public QuoteDTO addQuote(AddQuoteDTO addQuoteDTO) {
-        User user = userRepository
-                .getByEmail(addQuoteDTO.getPublisherEmail())
-                .orElseThrow();
-
+        User user = findUserByEmail(addQuoteDTO.getPublisherEmail());
         Quote quote = new Quote(addQuoteDTO.getText(), user);
         return quoteRepository.save(quote).toDTO();
     }
 
     public QuoteDTO updateQuote(UpdateQuoteDTO updateQuoteDTO) {
-        Quote quote = findById(updateQuoteDTO.getId());
+        Quote quote = findQuoteById(updateQuoteDTO.getId());
 
         if (userEmailEquals(quote.getPublisher(), updateQuoteDTO.getUserEmail())) {
             quote.update(updateQuoteDTO);
@@ -94,19 +93,19 @@ public class QuoteService {
     }
 
     public void upvoteQuote(Long id, String userEmail) {
-        Quote quote = findById(id);
-        User user = userRepository.getByEmail(userEmail).orElseThrow();
+        Quote quote = findQuoteById(id);
+        User user = findUserByEmail(userEmail);
         voteService.addUpvote(quote, user);
     }
 
     public void downvoteQuote(Long id, String userEmail) {
-        Quote quote = findById(id);
-        User user = userRepository.getByEmail(userEmail).orElseThrow();
+        Quote quote = findQuoteById(id);
+        User user = findUserByEmail(userEmail);
         voteService.addDownvote(quote, user);
     }
 
     public void deleteQuote(Long id, String userEmail) {
-        Quote quote = findById(id);
+        Quote quote = findQuoteById(id);
 
         if (userEmailEquals(quote.getPublisher(), userEmail)) {
             quoteRepository.delete(quote);
@@ -118,13 +117,21 @@ public class QuoteService {
         }
     }
 
-    private Quote findById(Long id) {
+    private Quote findQuoteById(Long id) {
         return quoteRepository.findById(id)
                 .orElseThrow(() -> new QuoteNotFoundException(
                         String.format("Quote with id = %d not found", id)
                 ));
     }
 
+    public User findUserByEmail(String email) {
+        return userRepository
+                .getByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("User with email %s not found", email)
+                ));
+    }
+    
     private boolean userEmailEquals(User user, String email) {
         return Objects.equals(user.getEmail(), email);
     }

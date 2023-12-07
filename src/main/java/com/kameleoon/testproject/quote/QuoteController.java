@@ -6,6 +6,7 @@ import com.kameleoon.testproject.quote.dto.UpdateQuoteDTO;
 import com.kameleoon.testproject.quote.exceptions.QuoteDeletionDeniedException;
 import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
 import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
+import com.kameleoon.testproject.user.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -109,8 +110,11 @@ public class QuoteController {
                 .build();
     }
 
-    @ExceptionHandler({ QuoteNotFoundException.class })
-    public ResponseEntity<String> handleNotFoundException(QuoteNotFoundException exception) {
+    @ExceptionHandler({
+            QuoteNotFoundException.class,
+            UserNotFoundException.class
+    })
+    public ResponseEntity<String> handleNotFoundException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
