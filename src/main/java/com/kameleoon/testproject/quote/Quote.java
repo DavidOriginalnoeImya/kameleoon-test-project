@@ -3,14 +3,14 @@ package com.kameleoon.testproject.quote;
 import com.kameleoon.testproject.quote.dto.QuoteDTO;
 import com.kameleoon.testproject.quote.dto.UpdateQuoteDTO;
 import com.kameleoon.testproject.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import com.kameleoon.testproject.vote.Vote;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -27,6 +27,9 @@ public class Quote {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "quote")
+    private Set<Vote> votes = new HashSet<>();
 
     public Quote() {}
 

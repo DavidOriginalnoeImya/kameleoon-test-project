@@ -3,10 +3,10 @@ package com.kameleoon.testproject.vote;
 import com.kameleoon.testproject.quote.Quote;
 import com.kameleoon.testproject.user.User;
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Vote {
 
     @EmbeddedId

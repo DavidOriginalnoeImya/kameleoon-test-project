@@ -20,7 +20,15 @@ public class QuoteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<QuoteDTO>> getQuotes() {
+    public ResponseEntity<List<QuoteDTO>> getQuotes(
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) String rate
+    ) {
+        if (limit != null && rate != null) {
+            return ResponseEntity
+                    .ok(quoteService.getQuotes(limit, rate));
+        }
+
         return ResponseEntity
                 .ok(quoteService.getQuotes());
     }

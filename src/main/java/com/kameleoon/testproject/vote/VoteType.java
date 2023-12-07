@@ -1,5 +1,5 @@
 package com.kameleoon.testproject.vote;
 
-enum VoteType {
+public enum VoteType {
     UPVOTE, DOWNVOTE
 }

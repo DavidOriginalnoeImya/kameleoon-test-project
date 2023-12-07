@@ -7,6 +7,8 @@ import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.user.UserRepository;
 import com.kameleoon.testproject.vote.VoteService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +39,14 @@ public class QuoteService {
         return quoteRepository.findAll()
                 .stream()
                 .map(Quote::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<QuoteDTO> getQuotes(int limit, String rate) {
+        Sort.Direction sortDirection = ("top".equals(rate)) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        return quoteRepository
+                .getQuoteTop(PageRequest.of(0, limit, sortDirection, "score"))
+                .stream().map(Quote::toDTO)
                 .collect(Collectors.toList());
     }
 
