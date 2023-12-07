@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @Builder
 @Getter @Setter
@@ -14,7 +14,7 @@ public class QuoteDTO {
 
     private String text;
 
-    private LocalDate lastUpdate;
+    private ZonedDateTime lastUpdate;
 
     private String publisher;
 

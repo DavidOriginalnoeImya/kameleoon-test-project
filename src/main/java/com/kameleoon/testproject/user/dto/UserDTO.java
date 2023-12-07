@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @Builder
 @Getter @Setter
@@ -16,6 +16,6 @@ public class UserDTO {
 
     private String email;
 
-    private LocalDate creationDate;
+    private ZonedDateTime creationDate;
 
 }

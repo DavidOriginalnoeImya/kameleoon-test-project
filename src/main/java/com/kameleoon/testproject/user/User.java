@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 
 @Entity
@@ -30,7 +30,7 @@ public class User {
     private String password;
 
     @Setter(AccessLevel.NONE)
-    private LocalDate creationDate = LocalDate.now();
+    private ZonedDateTime creationDate = ZonedDateTime.now();
 
     public static User create(AddUserDTO addUserDTO) {
         User user = new User();

@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public class Quote {
     @Setter
     private String text;
 
-    private LocalDate updateDate = LocalDate.now();
+    private ZonedDateTime updateDate = ZonedDateTime.now();
 
     @ManyToOne
     private User user;
@@ -41,7 +41,7 @@ public class Quote {
 
     public void update(UpdateQuoteDTO updateQuoteDTO) {
         text = updateQuoteDTO.getText();
-        updateDate = LocalDate.now();
+        updateDate = ZonedDateTime.now();
     }
 
     public QuoteDTO toDTO() {
