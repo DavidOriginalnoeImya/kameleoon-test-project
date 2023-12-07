@@ -1,5 +1,6 @@
 package com.kameleoon.testproject.quote.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,4 +11,6 @@ public class UpdateQuoteDTO {
 
     private String text;
 
+    @JsonIgnore
+    private String userEmail;
 }

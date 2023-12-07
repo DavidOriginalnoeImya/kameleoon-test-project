@@ -40,7 +40,11 @@ public class QuoteController {
     }
 
     @PostMapping
-    public ResponseEntity<QuoteDTO> addQuote(@RequestBody AddQuoteDTO addQuoteDTO) {
+    public ResponseEntity<QuoteDTO> addQuote(
+        @RequestBody AddQuoteDTO addQuoteDTO,
+        @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
+    ) {
+        addQuoteDTO.setPublisherEmail(userEmail);
         QuoteDTO quoteDTO = quoteService.addQuote(addQuoteDTO);
         return ResponseEntity
                 .created(
@@ -75,7 +79,11 @@ public class QuoteController {
     }
 
     @PutMapping
-    public ResponseEntity<QuoteDTO> updateQuote(@RequestBody UpdateQuoteDTO updateQuoteDTO) {
+    public ResponseEntity<QuoteDTO> updateQuote(
+        @RequestBody UpdateQuoteDTO updateQuoteDTO,
+        @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
+    ) {
+        updateQuoteDTO.setUserEmail(userEmail);
         return ResponseEntity
                 .ok(quoteService.updateQuote(updateQuoteDTO));
     }
@@ -87,8 +95,11 @@ public class QuoteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteQuote(@PathVariable Long id) {
-        quoteService.deleteQuote(id);
+    public ResponseEntity<?> deleteQuote(
+        @PathVariable Long id,
+        @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
+    ) {
+        quoteService.deleteQuote(id, userEmail);
         return ResponseEntity
                 .noContent()
                 .build();

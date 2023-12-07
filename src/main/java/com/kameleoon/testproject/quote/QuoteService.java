@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -77,8 +78,15 @@ public class QuoteService {
                 .findById(updateQuoteDTO.getId())
                 .orElseThrow();
 
-        quote.update(updateQuoteDTO);
-        return quoteRepository.save(quote).toDTO();
+        if (userEmailEquals(quote.getPublisher(), updateQuoteDTO.getUserEmail())) {
+            quote.update(updateQuoteDTO);
+            return quoteRepository.save(quote).toDTO();
+        }
+
+        throw new RuntimeException(String.format(
+            "User %s doesn't have permission to edit this quote",
+            updateQuoteDTO.getUserEmail()
+        ));
     }
 
     public void upvoteQuote(Long id, String userEmail) {
@@ -93,8 +101,20 @@ public class QuoteService {
         voteService.addDownvote(quote, user);
     }
 
-    public void deleteQuote(Long id) {
+    public void deleteQuote(Long id, String userEmail) {
         Quote quote = quoteRepository.findById(id).orElseThrow();
-        quoteRepository.delete(quote);
+
+        if (userEmailEquals(quote.getPublisher(), userEmail)) {
+            quoteRepository.delete(quote);
+        }
+        else {
+            throw new RuntimeException(String.format(
+                "User %s doesn't have permission to delete this quote", userEmail
+            ));
+        }
+    }
+
+    private boolean userEmailEquals(User user, String email) {
+        return Objects.equals(user.getEmail(), email);
     }
 }

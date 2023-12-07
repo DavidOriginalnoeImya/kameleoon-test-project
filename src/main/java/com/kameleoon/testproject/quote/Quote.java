@@ -26,17 +26,17 @@ public class Quote {
 
     private ZonedDateTime updateDate = ZonedDateTime.now();
 
-    @ManyToOne
-    private User user;
+    @ManyToOne(optional = false)
+    private User publisher;
 
     @OneToMany(mappedBy = "quote")
     private Set<Vote> votes = new HashSet<>();
 
     public Quote() {}
 
-    public Quote(String text, User user) {
+    public Quote(String text, User publisher) {
         this.text = text;
-        this.user = user;
+        this.publisher = publisher;
     }
 
     public void update(UpdateQuoteDTO updateQuoteDTO) {
@@ -49,7 +49,7 @@ public class Quote {
 
         return QuoteDTO.builder()
                 .id(id).text(text)
-                .publisher(user.getEmail())
+                .publisher(publisher.getEmail())
                 .lastUpdate(updateDate)
                 .upvotes(upvotes)
                 .downvotes(downvotes)
