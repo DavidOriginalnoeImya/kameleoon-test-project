@@ -3,6 +3,9 @@ package com.kameleoon.testproject.quote;
 import com.kameleoon.testproject.quote.dto.AddQuoteDTO;
 import com.kameleoon.testproject.quote.dto.QuoteDTO;
 import com.kameleoon.testproject.quote.dto.UpdateQuoteDTO;
+import com.kameleoon.testproject.quote.exceptions.QuoteDeletionDeniedException;
+import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
+import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
 import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.user.UserRepository;
 import com.kameleoon.testproject.vote.VoteService;
@@ -52,16 +55,19 @@ public class QuoteService {
     }
 
     public QuoteDTO getQuote(Long id) {
-        return quoteRepository.findById(id)
-                .orElseThrow()
-                .toDTO();
+        return findById(id).toDTO();
     }
 
     public QuoteDTO getRandomQuote() {
         List<Quote> quotes = quoteRepository.findAll();
-        return quotes
-                .get(ThreadLocalRandom.current().nextInt(0, quotes.size()))
-                .toDTO();
+
+        if (!quotes.isEmpty()) {
+            return quotes
+                    .get(ThreadLocalRandom.current().nextInt(0, quotes.size()))
+                    .toDTO();
+        }
+
+        throw new QuoteNotFoundException("Quotes not found");
     }
 
     public QuoteDTO addQuote(AddQuoteDTO addQuoteDTO) {
@@ -74,44 +80,49 @@ public class QuoteService {
     }
 
     public QuoteDTO updateQuote(UpdateQuoteDTO updateQuoteDTO) {
-        Quote quote = quoteRepository
-                .findById(updateQuoteDTO.getId())
-                .orElseThrow();
+        Quote quote = findById(updateQuoteDTO.getId());
 
         if (userEmailEquals(quote.getPublisher(), updateQuoteDTO.getUserEmail())) {
             quote.update(updateQuoteDTO);
             return quoteRepository.save(quote).toDTO();
         }
 
-        throw new RuntimeException(String.format(
+        throw new QuoteUpdateDeniedException(String.format(
             "User %s doesn't have permission to edit this quote",
             updateQuoteDTO.getUserEmail()
         ));
     }
 
     public void upvoteQuote(Long id, String userEmail) {
-        Quote quote = quoteRepository.findById(id).orElseThrow();
+        Quote quote = findById(id);
         User user = userRepository.getByEmail(userEmail).orElseThrow();
         voteService.addUpvote(quote, user);
     }
 
     public void downvoteQuote(Long id, String userEmail) {
-        Quote quote = quoteRepository.findById(id).orElseThrow();
+        Quote quote = findById(id);
         User user = userRepository.getByEmail(userEmail).orElseThrow();
         voteService.addDownvote(quote, user);
     }
 
     public void deleteQuote(Long id, String userEmail) {
-        Quote quote = quoteRepository.findById(id).orElseThrow();
+        Quote quote = findById(id);
 
         if (userEmailEquals(quote.getPublisher(), userEmail)) {
             quoteRepository.delete(quote);
         }
         else {
-            throw new RuntimeException(String.format(
+            throw new QuoteDeletionDeniedException(String.format(
                 "User %s doesn't have permission to delete this quote", userEmail
             ));
         }
+    }
+
+    private Quote findById(Long id) {
+        return quoteRepository.findById(id)
+                .orElseThrow(() -> new QuoteNotFoundException(
+                        String.format("Quote with id = %d not found", id)
+                ));
     }
 
     private boolean userEmailEquals(User user, String email) {

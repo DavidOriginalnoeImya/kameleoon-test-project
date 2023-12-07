@@ -3,6 +3,10 @@ package com.kameleoon.testproject.quote;
 import com.kameleoon.testproject.quote.dto.AddQuoteDTO;
 import com.kameleoon.testproject.quote.dto.QuoteDTO;
 import com.kameleoon.testproject.quote.dto.UpdateQuoteDTO;
+import com.kameleoon.testproject.quote.exceptions.QuoteDeletionDeniedException;
+import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
+import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -103,5 +107,22 @@ public class QuoteController {
         return ResponseEntity
                 .noContent()
                 .build();
+    }
+
+    @ExceptionHandler({ QuoteNotFoundException.class })
+    public ResponseEntity<String> handleNotFoundException(QuoteNotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler({
+            QuoteUpdateDeniedException.class,
+            QuoteDeletionDeniedException.class
+    })
+    public ResponseEntity<String> handleAccessDeniedException(RuntimeException exception) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(exception.getMessage());
     }
 }
