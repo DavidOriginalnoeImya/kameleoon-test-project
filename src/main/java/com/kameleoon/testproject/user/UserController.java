@@ -2,6 +2,7 @@ package com.kameleoon.testproject.user;
 
 import com.kameleoon.testproject.user.dto.AddUserDTO;
 import com.kameleoon.testproject.user.dto.UserDTO;
+import com.kameleoon.testproject.user.exceptions.UserAlreadyExistsException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,14 @@ public class UserController {
         return ResponseEntity
                 .badRequest()
                 .body("User creation error. Check the user data is correct");
+    }
+
+    @ExceptionHandler({ UserAlreadyExistsException.class })
+    public ResponseEntity<String> handleUserAlreadyExistsException(
+            UserAlreadyExistsException exception
+    ) {
+        return ResponseEntity
+                .badRequest()
+                .body(exception.getMessage());
     }
 }
