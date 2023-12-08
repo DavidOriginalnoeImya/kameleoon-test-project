@@ -25,17 +25,21 @@ public class QuoteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<QuoteDTO>> getQuotes(
-            @RequestParam(required = false) Integer limit,
-            @RequestParam(required = false) String rate
-    ) {
-        if (limit != null && rate != null) {
-            return ResponseEntity
-                    .ok(quoteService.getQuotes(limit, rate));
-        }
-
+    public ResponseEntity<List<QuoteDTO>> getQuotes() {
         return ResponseEntity
                 .ok(quoteService.getQuotes());
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<QuoteDTO>> getQuoteTop(@RequestParam Integer limit) {
+        return ResponseEntity
+                .ok(quoteService.getQuotes(limit, QuoteSortDirection.TOP));
+    }
+
+    @GetMapping("/flop")
+    public ResponseEntity<List<QuoteDTO>> getQuoteFlop(@RequestParam Integer limit) {
+        return ResponseEntity
+                .ok(quoteService.getQuotes(limit, QuoteSortDirection.FLOP));
     }
 
     @GetMapping("/{id}")

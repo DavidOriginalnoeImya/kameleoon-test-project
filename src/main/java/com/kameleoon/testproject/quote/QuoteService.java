@@ -8,7 +8,6 @@ import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
 import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
 import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.user.UserRepository;
-import com.kameleoon.testproject.user.dto.UserDTO;
 import com.kameleoon.testproject.user.exceptions.UserNotFoundException;
 import com.kameleoon.testproject.vote.VoteService;
 import jakarta.transaction.Transactional;
@@ -48,8 +47,12 @@ public class QuoteService {
                 .collect(Collectors.toList());
     }
 
-    public List<QuoteDTO> getQuotes(int limit, String rate) {
-        Sort.Direction sortDirection = ("top".equals(rate)) ? Sort.Direction.DESC : Sort.Direction.ASC;
+    public List<QuoteDTO> getQuotes(int limit, QuoteSortDirection quoteSortDirection) {
+        Sort.Direction sortDirection = quoteSortDirection.equals(QuoteSortDirection.TOP)
+                ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        if (limit < 1) return List.of();
+
         return quoteRepository
                 .getQuoteTop(PageRequest.of(0, limit, sortDirection, "score"))
                 .stream().map(Quote::toDTO)
