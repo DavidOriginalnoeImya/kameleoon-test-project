@@ -3,8 +3,10 @@ package com.kameleoon.testproject.user;
 import com.kameleoon.testproject.user.dto.AddUserDTO;
 import com.kameleoon.testproject.user.dto.UserDTO;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +20,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> addUser(@RequestBody AddUserDTO addUserDTO) {
+    public ResponseEntity<UserDTO> addUser(@RequestBody @Valid AddUserDTO addUserDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userService.addUser(addUserDTO));
     }
 
-    @ExceptionHandler({ ConstraintViolationException.class })
-    public ResponseEntity<String> handleConstraintException(ConstraintViolationException exception) {
+    @ExceptionHandler({ MethodArgumentNotValidException.class })
+    public ResponseEntity<String> handleConstraintException() {
         return ResponseEntity
                 .badRequest()
                 .body("User creation error. Check the user data is correct");

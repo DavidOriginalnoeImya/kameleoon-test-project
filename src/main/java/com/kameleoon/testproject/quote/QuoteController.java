@@ -8,8 +8,10 @@ import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
 import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
 import com.kameleoon.testproject.user.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -51,7 +53,7 @@ public class QuoteController {
 
     @PostMapping
     public ResponseEntity<QuoteDTO> addQuote(
-        @RequestBody AddQuoteDTO addQuoteDTO,
+        @RequestBody @Valid AddQuoteDTO addQuoteDTO,
         @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
     ) {
         addQuoteDTO.setPublisherEmail(userEmail);
@@ -90,7 +92,7 @@ public class QuoteController {
 
     @PutMapping
     public ResponseEntity<QuoteDTO> updateQuote(
-        @RequestBody UpdateQuoteDTO updateQuoteDTO,
+        @RequestBody @Valid UpdateQuoteDTO updateQuoteDTO,
         @RequestHeader(name = "Email", defaultValue = "test@mail.com") String userEmail
     ) {
         updateQuoteDTO.setUserEmail(userEmail);
@@ -115,28 +117,22 @@ public class QuoteController {
                 .build();
     }
 
-    @ExceptionHandler({
-            QuoteNotFoundException.class,
-            UserNotFoundException.class
-    })
+    @ExceptionHandler({ QuoteNotFoundException.class, UserNotFoundException.class })
     public ResponseEntity<String> handleNotFoundException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler({
-            QuoteUpdateDeniedException.class,
-            QuoteDeletionDeniedException.class
-    })
+    @ExceptionHandler({ QuoteUpdateDeniedException.class, QuoteDeletionDeniedException.class})
     public ResponseEntity<String> handleAccessDeniedException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler({ ConstraintViolationException.class })
-    public ResponseEntity<String> handleConstraintException(ConstraintViolationException exception) {
+    @ExceptionHandler({ MethodArgumentNotValidException.class })
+    public ResponseEntity<String> handleConstraintException() {
         return ResponseEntity
                 .badRequest()
                 .body("Quote creation error. Check the quote data is correct");
