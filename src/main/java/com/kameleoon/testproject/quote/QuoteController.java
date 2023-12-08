@@ -27,30 +27,59 @@ public class QuoteController {
         this.quoteService = quoteService;
     }
 
+    /**
+     * Метод для получения списка всех доступных цитат
+     */
     @GetMapping
     public ResponseEntity<List<QuoteDTO>> getQuotes() {
         return ResponseEntity
                 .ok(quoteService.getQuotes());
     }
 
+    /**
+     * Метод для получения списка цитат в порядке убывания их рейтинга
+     * @param limit - ограничение на количество возвращаемых цитат
+     */
     @GetMapping("/top")
     public ResponseEntity<List<QuoteDTO>> getQuoteTop(@RequestParam Integer limit) {
         return ResponseEntity
                 .ok(quoteService.getQuotes(limit, QuoteSortDirection.TOP));
     }
 
+    /**
+     * Метод для получения списка цитат в порядке возрастания их рейтинга
+     * @param limit - ограничение на количество возвращаемых цитат
+     */
     @GetMapping("/flop")
     public ResponseEntity<List<QuoteDTO>> getQuoteFlop(@RequestParam Integer limit) {
         return ResponseEntity
                 .ok(quoteService.getQuotes(limit, QuoteSortDirection.FLOP));
     }
 
+    /**
+     * Метод для получения одной конкретной цитаты
+     * @param id - идентификатор цитаты
+     */
     @GetMapping("/{id}")
     public ResponseEntity<QuoteDTO> getQuote(@PathVariable Long id) {
         return ResponseEntity
                 .ok(quoteService.getQuote(id));
     }
 
+    /**
+     * Метод для получения одной рандомной цитаты
+     */
+    @GetMapping("/random")
+    public ResponseEntity<QuoteDTO> getRandomQuote() {
+        return ResponseEntity
+                .ok(quoteService.getRandomQuote());
+    }
+
+    /**
+     * Метод для добавления новой цитаты
+     * @param addQuoteDTO - dto, содержащий данные добавляемой цитаты
+     * @param userEmail - http-заголовок, содержащий email пользователя, добавляющего цитату
+     */
     @PostMapping
     public ResponseEntity<QuoteDTO> addQuote(
         @RequestBody @Valid AddQuoteDTO addQuoteDTO,
@@ -68,6 +97,11 @@ public class QuoteController {
                 .body(quoteDTO);
     }
 
+    /**
+     * Метод для добавления положительного рейтинга цитаты
+     * @param id - идентификатор оцениваемой цитаты
+     * @param userEmail - http-заголовок, содержащий email пользователя, оценивающего цитату
+     */
     @PostMapping("/{id}/upvote")
     public ResponseEntity<?> upvoteQuote(
             @PathVariable Long id,
@@ -79,6 +113,11 @@ public class QuoteController {
                 .build();
     }
 
+    /**
+     * Метод для добавления отрицательного рейтинга цитаты
+     * @param id - идентификатор оцениваемой цитаты
+     * @param userEmail - http-заголовок, содержащий email пользователя, оценивающего цитату
+     */
     @PostMapping("/{id}/downvote")
     public ResponseEntity<?> downvoteQuote(
             @PathVariable Long id,
@@ -90,6 +129,11 @@ public class QuoteController {
                 .build();
     }
 
+    /**
+     * Метод для обновления существующей цитаты
+     * @param updateQuoteDTO - dto, содержащий данные обновляемой цитаты
+     * @param userEmail - http-заголовок, содержащий email пользователя, обновляющего цитату
+     */
     @PutMapping
     public ResponseEntity<QuoteDTO> updateQuote(
         @RequestBody @Valid UpdateQuoteDTO updateQuoteDTO,
@@ -100,12 +144,12 @@ public class QuoteController {
                 .ok(quoteService.updateQuote(updateQuoteDTO));
     }
 
-    @GetMapping("/random")
-    public ResponseEntity<QuoteDTO> getRandomQuote() {
-        return ResponseEntity
-                .ok(quoteService.getRandomQuote());
-    }
 
+    /**
+     * Метод для удаления существующей цитаты
+     * @param id - идентификатор удаляемой цитаты
+     * @param userEmail - http-заголовок, содержащий email пользователя, удаляющего цитату
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteQuote(
         @PathVariable Long id,

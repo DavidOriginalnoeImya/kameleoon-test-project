@@ -20,6 +20,10 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Метод для добавления нового пользователя
+     * @param addUserDTO - dto, содержащий данные добавляемого пользователя
+     */
     @PostMapping
     public ResponseEntity<UserDTO> addUser(@RequestBody @Valid AddUserDTO addUserDTO) {
         return ResponseEntity
