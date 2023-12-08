@@ -6,6 +6,8 @@ import com.kameleoon.testproject.user.User;
 import com.kameleoon.testproject.vote.Vote;
 import com.kameleoon.testproject.vote.VoteType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +24,7 @@ public class Quote {
     private Long id;
 
     @Setter
+    @NotNull @NotEmpty
     private String text;
 
     private ZonedDateTime updateDate = ZonedDateTime.now();

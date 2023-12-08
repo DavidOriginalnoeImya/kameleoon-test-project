@@ -7,6 +7,7 @@ import com.kameleoon.testproject.quote.exceptions.QuoteDeletionDeniedException;
 import com.kameleoon.testproject.quote.exceptions.QuoteNotFoundException;
 import com.kameleoon.testproject.quote.exceptions.QuoteUpdateDeniedException;
 import com.kameleoon.testproject.user.exceptions.UserNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -132,5 +133,12 @@ public class QuoteController {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(exception.getMessage());
+    }
+
+    @ExceptionHandler({ ConstraintViolationException.class })
+    public ResponseEntity<String> handleConstraintException(ConstraintViolationException exception) {
+        return ResponseEntity
+                .badRequest()
+                .body("Quote creation error. Check the quote data is correct");
     }
 }

@@ -4,6 +4,8 @@ import com.kameleoon.testproject.user.dto.AddUserDTO;
 import com.kameleoon.testproject.user.dto.UserDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,12 +23,15 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Long id;
 
+    @NotNull @NotEmpty
     private String name;
 
     @Email
+    @NotNull @NotEmpty
     @Column(unique = true)
     private String email;
 
+    @NotNull @NotEmpty
     private String password;
 
     @Setter(AccessLevel.NONE)
